@@ -982,7 +982,7 @@ function generatePDF() {
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(8);
       doc.setTextColor(...WHITE);
-      doc.text(pdfSafe('tom@tms-solutions-group.com | tms-solutions-group.com | 386-387-8620'), W/2, H - 5.5, {align:'center'});
+      doc.text('tom@tms-solutions-group.com | tms-solutions-group.com | 386-387-8620', W/2, H - 5.5, {align:'center'});
     }
 
     // ===== PAGE 1: COVER =====
@@ -1337,7 +1337,7 @@ function generatePDF() {
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8);
     doc.setTextColor(...GOLD);
-    doc.text(pdfSafe('tom@tms-solutions-group.com  |  tms-solutions-group.com  |  386-387-8620'), W/2, oy + 54, {align:'center'});
+    doc.text('tom@tms-solutions-group.com  |  tms-solutions-group.com  |  386-387-8620', W/2, oy + 54, {align:'center'});
 
     addFooter(3);
 
