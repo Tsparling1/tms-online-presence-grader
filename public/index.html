@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Website &amp; Online Presence Grader | TMS Solutions Group</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream: #FAFAF7;
+      --gold: #B8860B;
+      --gold-light: #D4A017;
+      --red: #C0392B;
+      --yellow: #E67E22;
+      --green: #27AE60;
+      --dark: #1a1a1a;
+      --mid: #555;
+      --light: #888;
+      --border: #E0DDD5;
+      --card: #ffffff;
+      --shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--cream); color: var(--dark); min-height: 100vh; }
+    .view { display: none; }
+    .view.active { display: block; }
+
+    /* ===== HEADER ===== */
+    .site-header {
+      background: var(--dark);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .site-header .brand { color: #fff; font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; }
+    .site-header .contact { color: #ccc; font-size: 0.78rem; }
+
+    /* ===== LANDING ===== */
+    .landing-hero {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 60px 24px 40px;
+      text-align: center;
+    }
+    .pill {
+      display: inline-block;
+      background: var(--gold);
+      color: #fff;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 6px 18px;
+      border-radius: 999px;
+      margin-bottom: 24px;
+    }
+    .landing-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 5vw, 2.8rem);
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 18px;
+      color: var(--dark);
+    }
+    .landing-subtitle {
+      font-size: 1.05rem;
+      color: var(--mid);
+      margin-bottom: 32px;
+      line-height: 1.6;
+    }
+    .benefit-list {
+      list-style: none;
+      text-align: left;
+      display: inline-block;
+      margin-bottom: 36px;
+    }
+    .benefit-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.97rem;
+      color: var(--mid);
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+    .benefit-list li .check {
+      width: 20px;
+      height: 20px;
+      min-width: 20px;
+      background: var(--green);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 700;
+      margin-top: 1px;
+    }
+    .name-input-wrap {
+      margin-bottom: 24px;
+    }
+    .name-input-wrap label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--mid);
+      margin-bottom: 8px;
+    }
+    .name-input-wrap input {
+      width: 100%;
+      max-width: 400px;
+      padding: 12px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+      background: #fff;
+      color: var(--dark);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .name-input-wrap input:focus { border-color: var(--gold); }
+    .btn-primary {
+      background: var(--gold);
+      color: #fff;
+      border: none;
+      padding: 15px 40px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      display: inline-block;
+    }
+    .btn-primary:hover { background: var(--gold-light); transform: translateY(-1px); }
+    .disclaimer {
+      margin-top: 12px;
+      font-size: 0.82rem;
+      color: var(--light);
+    }
+    .benchmarks-preview {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      max-width: 760px;
+      margin: 48px auto 0;
+      padding: 0 24px;
+    }
+    .bench-card {
+      background: var(--card);
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+    .bench-card .bench-stat {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 6px;
+    }
+    .bench-card .bench-label { font-size: 0.8rem; color: var(--mid); line-height: 1.4; }
+
+    /* ===== ASSESSMENT ===== */
+    .assessment-wrap {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 40px 24px 60px;
+    }
+    .assessment-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .assessment-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      margin-bottom: 8px;
+    }
+    .assessment-header p { color: var(--mid); font-size: 0.95rem; }
+    .progress-bar-wrap {
+      background: var(--border);
+      border-radius: 999px;
+      height: 6px;
+      margin: 16px 0 32px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--gold);
+      border-radius: 999px;
+      transition: width 0.3s;
+    }
+    .category-section {
+      background: var(--card);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .category-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1.5px solid var(--border);
+    }
+    .cat-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--gold);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .cat-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+    .cat-num { font-size: 0.8rem; color: var(--light); margin-top: 2px; }
+    .question-block { margin-bottom: 22px; }
+    .question-block:last-child { margin-bottom: 0; }
+    .question-text {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--dark);
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+    .options-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .option-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 18px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.88rem;
+      font-weight: 500;
+      transition: all 0.15s;
+      background: #fff;
+      user-select: none;
+    }
+    .option-label input[type="radio"] { display: none; }
+    .option-label:hover { border-color: var(--gold); background: #FFF8E7; }
+    .option-label.selected {
+      border-color: var(--gold);
+      background: var(--gold);
+      color: #fff;
+    }
+    .assessment-footer {
+      text-align: center;
+      margin-top: 32px;
+    }
+    .validation-msg {
+      color: var(--red);
+      font-size: 0.88rem;
+      margin-top: 12px;
+      display: none;
+    }
+
+    /* ===== RESULTS ===== */
+    .results-wrap {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 40px 24px 60px;
+    }
+    .results-header { text-align: center; margin-bottom: 32px; }
+    .results-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      margin-bottom: 6px;
+    }
+    .results-header p { color: var(--mid); font-size: 0.95rem; }
+
+    .score-banner {
+      background: var(--card);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      padding: 32px;
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .score-ring-wrap { flex-shrink: 0; }
+    .score-ring { width: 160px; height: 160px; }
+    .ring-bg { stroke: var(--border); }
+    .ring-fill { transition: stroke-dasharray 1s ease; }
+    .ring-score-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      fill: var(--dark);
+    }
+    .ring-label-text { font-size: 0.75rem; fill: var(--light); }
+    .score-info { flex: 1; min-width: 200px; }
+    .score-label {
+      display: inline-block;
+      padding: 5px 16px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .score-label.red { background: #FDEDEC; color: var(--red); }
+    .score-label.yellow { background: #FEF5E7; color: var(--yellow); }
+    .score-label.green { background: #EAFAF1; color: var(--green); }
+    .score-headline {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      margin-bottom: 8px;
+    }
+    .score-desc { font-size: 0.9rem; color: var(--mid); line-height: 1.6; }
+
+    .categories-card {
+      background: var(--card);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .categories-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+    }
+    .cat-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .cat-row:last-child { margin-bottom: 0; }
+    .cat-row-name {
+      width: 200px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--dark);
+      flex-shrink: 0;
+    }
+    .cat-bar-wrap {
+      flex: 1;
+      background: var(--border);
+      border-radius: 999px;
+      height: 10px;
+      overflow: hidden;
+    }
+    .cat-bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.8s ease;
+    }
+    .cat-score-label {
+      width: 60px;
+      text-align: right;
+      font-size: 0.82rem;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .opportunities-card {
+      background: var(--card);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .opportunities-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+    }
+    .opp-item {
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+      margin-bottom: 14px;
+    }
+    .opp-item:last-child { margin-bottom: 0; }
+    .opp-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .opp-title { font-weight: 700; font-size: 0.97rem; }
+    .opp-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: #FDEDEC;
+      color: var(--red);
+    }
+    .opp-badge.medium { background: #FEF5E7; color: var(--yellow); }
+    .opp-desc { font-size: 0.88rem; color: var(--mid); line-height: 1.5; margin-bottom: 8px; }
+    .opp-stat {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--gold);
+      font-style: italic;
+    }
+
+    .benchmarks-card {
+      background: var(--card);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .benchmarks-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      margin-bottom: 16px;
+    }
+    .bench-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 14px;
+    }
+    .bench-item { text-align: center; padding: 14px 10px; background: var(--cream); border-radius: 8px; }
+    .bench-item .bnum { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; color: var(--gold); }
+    .bench-item .blabel { font-size: 0.76rem; color: var(--mid); line-height: 1.4; margin-top: 4px; }
+
+    .cta-card {
+      background: var(--dark);
+      border-radius: 12px;
+      padding: 32px;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .cta-card h3 { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: #fff; margin-bottom: 10px; }
+    .cta-card p { color: #ccc; font-size: 0.92rem; margin-bottom: 20px; line-height: 1.5; }
+    .cta-card a {
+      display: inline-block;
+      background: var(--gold);
+      color: #fff;
+      padding: 13px 32px;
+      border-radius: 8px;
+      font-weight: 700;
+      text-decoration: none;
+      font-size: 0.95rem;
+    }
+    .cta-contact { color: #aaa; font-size: 0.82rem; margin-top: 14px; }
+
+    .pdf-btn-wrap { text-align: center; margin-bottom: 32px; }
+    .btn-pdf {
+      background: #fff;
+      color: var(--dark);
+      border: 2px solid var(--gold);
+      padding: 13px 36px;
+      border-radius: 8px;
+      font-size: 0.97rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-pdf:hover { background: var(--gold); color: #fff; }
+
+    /* ===== FOOTER ===== */
+    .site-footer {
+      background: var(--dark);
+      color: #888;
+      text-align: center;
+      padding: 18px 24px;
+      font-size: 0.8rem;
+      margin-top: 40px;
+    }
+
+    @media (max-width: 600px) {
+      .score-banner { flex-direction: column; align-items: center; text-align: center; }
+      .cat-row-name { width: 140px; font-size: 0.78rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="brand">TMS Solutions Group</div>
+  <div class="contact">tom@tms-solutions-group.com &nbsp;|&nbsp; 386-387-8620</div>
+</header>
+
+<!-- ===== LANDING VIEW ===== -->
+<div id="view-landing" class="view active">
+  <div class="landing-hero">
+    <div class="pill">Free Assessment Tool</div>
+    <h1 class="landing-title">Website &amp; Online Presence Grader</h1>
+    <p class="landing-subtitle">Find out how your business looks online &mdash; and what to fix first to attract more local customers.</p>
+    <ul class="benefit-list">
+      <li><span class="check">&#10003;</span>Score your presence across 6 key categories in under 3 minutes</li>
+      <li><span class="check">&#10003;</span>Get a personalized report with your top 3 improvement opportunities</li>
+      <li><span class="check">&#10003;</span>Download a branded PDF to share with your team</li>
+    </ul>
+    <div class="name-input-wrap">
+      <label for="business-name">Business Name (optional)</label>
+      <input type="text" id="business-name" placeholder="e.g. Main Street Plumbing">
+    </div>
+    <button class="btn-primary" onclick="startAssessment()">Start Free Assessment</button>
+    <p class="disclaimer">No sign-up required. Results shown instantly.</p>
+  </div>
+
+  <div class="benchmarks-preview">
+    <div class="bench-card">
+      <div class="bench-stat">97%</div>
+      <div class="bench-label">of consumers research local businesses online before visiting</div>
+    </div>
+    <div class="bench-card">
+      <div class="bench-stat">39</div>
+      <div class="bench-label">average number of Google reviews for a local business</div>
+    </div>
+    <div class="bench-card">
+      <div class="bench-stat">126%</div>
+      <div class="bench-label">more traffic for businesses in the Google 3-pack</div>
+    </div>
+    <div class="bench-card">
+      <div class="bench-stat">108%</div>
+      <div class="bench-label">more revenue earned by businesses with 25+ reviews</div>
+    </div>
+  </div>
+  <div style="height:60px;"></div>
+</div>
+
+<!-- ===== ASSESSMENT VIEW ===== -->
+<div id="view-assessment" class="view">
+  <div class="assessment-wrap">
+    <div class="assessment-header">
+      <h2>Your Online Presence Assessment</h2>
+      <p>Answer all 24 questions honestly to get the most accurate score.</p>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+      </div>
+    </div>
+    <div id="questions-container"></div>
+    <div class="assessment-footer">
+      <button class="btn-primary" onclick="submitAssessment()">See My Results</button>
+      <div class="validation-msg" id="validation-msg">Please answer all questions before continuing.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== RESULTS VIEW ===== -->
+<div id="view-results" class="view">
+  <div class="results-wrap">
+    <div class="results-header">
+      <h2>Your Online Presence Report</h2>
+      <p id="results-business-label">See how your business scores across 6 key areas.</p>
+    </div>
+
+    <!-- Score Banner -->
+    <div class="score-banner" id="score-banner">
+      <div class="score-ring-wrap">
+        <svg class="score-ring" viewBox="0 0 180 180">
+          <circle class="ring-bg" cx="90" cy="90" r="76" fill="none" stroke="#E0DDD5" stroke-width="14"/>
+          <circle id="ring-fill" class="ring-fill" cx="90" cy="90" r="76" fill="none" stroke="#27AE60" stroke-width="14"
+            stroke-dasharray="0 477.52" stroke-linecap="round" transform="rotate(-90 90 90)"/>
+          <text id="ring-score-text" class="ring-score-text" x="90" y="85" text-anchor="middle" dominant-baseline="middle" font-family="Playfair Display, serif" font-size="28" font-weight="700" fill="#1a1a1a">0</text>
+          <text class="ring-label-text" x="90" y="110" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#888">out of 72</text>
+        </svg>
+      </div>
+      <div class="score-info">
+        <span class="score-label" id="score-label">High Opportunity</span>
+        <div class="score-headline" id="score-headline"></div>
+        <div class="score-desc" id="score-desc"></div>
+      </div>
+    </div>
+
+    <!-- Category Breakdown -->
+    <div class="categories-card">
+      <h3>Score by Category</h3>
+      <div id="categories-breakdown"></div>
+    </div>
+
+    <!-- Top 3 Opportunities -->
+    <div class="opportunities-card">
+      <h3>Your Top 3 Improvement Opportunities</h3>
+      <div id="opportunities-list"></div>
+    </div>
+
+    <!-- Benchmarks -->
+    <div class="benchmarks-card">
+      <h3>Industry Benchmarks</h3>
+      <div class="bench-grid">
+        <div class="bench-item"><div class="bnum">97%</div><div class="blabel">of consumers research local businesses online before visiting</div></div>
+        <div class="bench-item"><div class="bnum">39</div><div class="blabel">average Google reviews for a local business</div></div>
+        <div class="bench-item"><div class="bnum">126%</div><div class="blabel">more traffic from the Google 3-pack</div></div>
+        <div class="bench-item"><div class="bnum">108%</div><div class="blabel">more revenue with 25+ Google reviews</div></div>
+        <div class="bench-item"><div class="bnum">18%</div><div class="blabel">revenue growth linked to positive reviews (Harvard)</div></div>
+      </div>
+    </div>
+
+    <!-- PDF Download -->
+    <div class="pdf-btn-wrap">
+      <button class="btn-pdf" onclick="generatePDF()">Download PDF Report</button>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-card">
+      <h3>Ready to Improve Your Online Presence?</h3>
+      <p>TMS Solutions Group helps local businesses dominate their market online. Let's build a custom strategy for your business.</p>
+      <a href="mailto:tom@tms-solutions-group.com">Schedule a Free Strategy Call</a>
+      <div class="cta-contact">tom@tms-solutions-group.com &nbsp;|&nbsp; tms-solutions-group.com &nbsp;|&nbsp; 386-387-8620</div>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  tom@tms-solutions-group.com &nbsp;&bull;&nbsp; tms-solutions-group.com &nbsp;&bull;&nbsp; 386-387-8620 &nbsp;&bull;&nbsp; TMS Solutions Group
+</footer>
+
+<script>
+// ===== DATA =====
+const CATEGORIES = [
+  {
+    id: 'gbp',
+    name: 'Google Business Profile',
+    abbr: 'GBP',
+    questions: [
+      { text: 'Is your Google Business Profile (GBP) claimed and verified?', options: [{label:'Yes',score:3},{label:'No',score:0}] },
+      { text: 'Is your GBP info complete (hours, photos, description)?', options: [{label:'Yes',score:3},{label:'No',score:0}] },
+      { text: 'Do you have 40 or more Google reviews?', options: [{label:'Yes',score:3},{label:'No',score:0}] },
+      { text: 'Is your average Google rating 4.2 or above?', options: [{label:'Yes',score:3},{label:'No',score:0}] },
+    ]
+  },
+  {
+    id: 'website',
+    name: 'Website Basics',
+    abbr: 'WEB',
+    questions: [
+      { text: 'Do you have a business website?', options: [{label:'Yes',score:3},{label:'No',score:0}] },
+      { text: 'Is your website mobile-friendly?', options: [{label:'Yes',score:3},{label:'No',score:0}] },
+      { text: 'Does your website load quickly (under 3 seconds)?', options: [{label:'Yes',score:3},{label:'No',score:0}] },
+      { text: 'Does your homepage have a clear call to action (call now, book online, etc.)?', options: [{label:'Yes',score:3},{label:'No',score:0}] },
+    ]
+  },
+  {
+    id: 'reviews',
+    name: 'Review Volume & Quality',
+    abbr: 'REV',
+    questions: [
+      { text: 'How many Google reviews does your business currently have?', options: [{label:'50 or more',score:3},{label:'26 to 50',score:2},{label:'10 to 25',score:1},{label:'Fewer than 10',score:0}] },
+      { text: 'Is your overall Google rating 4.0 or higher?', options: [{label:'Yes',score:3},{label:'No',score:0}] },
+      { text: 'Have you received at least one new Google review in the last 30 days?', options: [{label:'Yes',score:3},{label:'No',score:0}] },
+      { text: 'Do you regularly respond to your Google reviews?', options: [{label:'Yes',score:3},{label:'No',score:0}] },
+    ]
+  },
+  {
+    id: 'seo',
+    name: 'Local SEO',
+    abbr: 'SEO',
+    questions: [
+      { text: 'Does your business name, address, and phone match exactly across all directories?', options: [{label:'Yes',score:3},{label:'No',score:0}] },
+      { text: 'Is your business listed on Google, Yelp, and Facebook?', options: [{label:'Yes',score:3},{label:'No',score:0}] },
+      { text: 'Do you appear in Google Maps results for your main service?', options: [{label:'Yes',score:3},{label:'No',score:0}] },
+      { text: 'Does your website include location-specific keywords (city, neighborhood)?', options: [{label:'Yes',score:3},{label:'No',score:0}] },
+    ]
+  },
+  {
+    id: 'social',
+    name: 'Social Media Presence',
+    abbr: 'SOC',
+    questions: [
+      { text: 'Do you have an active Facebook or Instagram business account?', options: [{label:'Yes',score:3},{label:'No',score:0}] },
+      { text: 'Have you posted on social media in the last 30 days?', options: [{label:'Yes',score:3},{label:'No',score:0}] },
+      { text: 'Do you have more than 100 followers on your main social platform?', options: [{label:'Yes',score:3},{label:'No',score:0}] },
+      { text: 'Does your website link to your social media profiles?', options: [{label:'Yes',score:3},{label:'No',score:0}] },
+    ]
+  },
+  {
+    id: 'visibility',
+    name: 'Online Visibility',
+    abbr: 'VIS',
+    questions: [
+      { text: 'Can customers find your business when searching your main service + city name?', options: [{label:'Yes',score:3},{label:'No',score:0}] },
+      { text: 'Does your business appear in the Google 3-pack (top map results)?', options: [{label:'Yes',score:3},{label:'No',score:0}] },
+      { text: 'Do you have 10 or more photos on your Google Business Profile?', options: [{label:'Yes',score:3},{label:'No',score:0}] },
+      { text: 'Does your website appear on page 1 of Google for your primary service?', options: [{label:'Yes',score:3},{label:'No',score:0}] },
+    ]
+  }
+];
+
+const OPPORTUNITY_TIPS = {
+  gbp: {
+    title: 'Claim and Optimize Your Google Business Profile',
+    impact: 'High Impact',
+    desc: 'Your GBP is your most powerful local search asset. Claim, verify, and complete your profile with current hours, quality photos, and a detailed business description.',
+    stat: '97% of consumers research local businesses online before visiting.'
+  },
+  website: {
+    title: 'Build or Upgrade Your Business Website',
+    impact: 'High Impact',
+    desc: 'A fast, mobile-friendly website with a clear call to action converts visitors into paying customers. Without one, you are invisible to the majority of local online searches.',
+    stat: 'Mobile searches account for over 60% of all local search activity.'
+  },
+  reviews: {
+    title: 'Launch a Review Generation System',
+    impact: 'High Impact',
+    desc: 'Businesses with 25 or more reviews earn 108% more revenue than average. Start asking every satisfied customer for a Google review using a simple follow-up text or email.',
+    stat: 'The average local business has only 39 Google reviews.'
+  },
+  seo: {
+    title: 'Fix Your Local Directory Listings',
+    impact: 'High Impact',
+    desc: 'Inconsistent business information confuses Google and suppresses your rankings. Ensure your name, address, and phone number match exactly across Google, Yelp, and Facebook.',
+    stat: 'Accurate listings can improve local search rankings by up to 20%.'
+  },
+  social: {
+    title: 'Build a Consistent Social Media Presence',
+    impact: 'Medium Impact',
+    desc: 'Regular posts signal activity and trustworthiness to potential customers. Aim for at least 2-3 posts per week on your strongest platform and link your website to your profiles.',
+    stat: 'Businesses with active social media see 25% higher customer engagement.'
+  },
+  visibility: {
+    title: 'Get Into the Google 3-Pack',
+    impact: 'High Impact',
+    desc: 'Appearing in the Google 3-pack map results generates 126% more traffic. Focus on growing reviews, optimizing your GBP, and adding local keywords to your website.',
+    stat: 'Appearing in the Google 3-pack generates 126% more traffic.'
+  }
+};
+
+// ===== STATE =====
+let answers = {};
+let businessName = '';
+let categoryScores = {};
+let totalScore = 0;
+
+// ===== INIT =====
+function renderQuestions() {
+  const container = document.getElementById('questions-container');
+  container.innerHTML = '';
+  CATEGORIES.forEach((cat, ci) => {
+    const sec = document.createElement('div');
+    sec.className = 'category-section';
+    sec.innerHTML = `
+      <div class="category-header">
+        <div class="cat-icon">${cat.abbr.charAt(0)}</div>
+        <div>
+          <div class="cat-name">${cat.name}</div>
+          <div class="cat-num">Category ${ci+1} of 6 &mdash; 4 questions</div>
+        </div>
+      </div>
+    `;
+    cat.questions.forEach((q, qi) => {
+      const qKey = `${cat.id}_${qi}`;
+      const qBlock = document.createElement('div');
+      qBlock.className = 'question-block';
+      qBlock.innerHTML = `<div class="question-text">${qi+1}. ${q.text}</div>`;
+      const optRow = document.createElement('div');
+      optRow.className = 'options-row';
+      q.options.forEach((opt, oi) => {
+        const lbl = document.createElement('label');
+        lbl.className = 'option-label';
+        lbl.dataset.key = qKey;
+        lbl.dataset.score = opt.score;
+        lbl.innerHTML = `<input type="radio" name="${qKey}" value="${opt.score}"> ${opt.label}`;
+        lbl.querySelector('input').addEventListener('change', () => {
+          // Deselect siblings
+          document.querySelectorAll(`label[data-key="${qKey}"]`).forEach(l => l.classList.remove('selected'));
+          lbl.classList.add('selected');
+          answers[qKey] = opt.score;
+          updateProgress();
+        });
+        optRow.appendChild(lbl);
+      });
+      qBlock.appendChild(optRow);
+      sec.appendChild(qBlock);
+    });
+    container.appendChild(sec);
+  });
+}
+
+function updateProgress() {
+  const total = CATEGORIES.reduce((s,c) => s + c.questions.length, 0);
+  const answered = Object.keys(answers).length;
+  document.getElementById('progress-fill').style.width = Math.round(answered/total*100)+'%';
+}
+
+function startAssessment() {
+  businessName = document.getElementById('business-name').value.trim();
+  renderQuestions();
+  showView('view-assessment');
+  window.scrollTo(0,0);
+}
+
+function submitAssessment() {
+  const total = CATEGORIES.reduce((s,c) => s + c.questions.length, 0);
+  if (Object.keys(answers).length < total) {
+    const msg = document.getElementById('validation-msg');
+    msg.style.display = 'block';
+    // Scroll to first unanswered
+    for (const cat of CATEGORIES) {
+      for (let qi = 0; qi < cat.questions.length; qi++) {
+        const key = `${cat.id}_${qi}`;
+        if (answers[key] === undefined) {
+          const el = document.querySelector(`label[data-key="${key}"]`);
+          if (el) { el.closest('.category-section').scrollIntoView({behavior:'smooth', block:'center'}); }
+          return;
+        }
+      }
+    }
+    return;
+  }
+  document.getElementById('validation-msg').style.display = 'none';
+  calculateResults();
+  renderResults();
+  showView('view-results');
+  window.scrollTo(0,0);
+}
+
+function calculateResults() {
+  totalScore = 0;
+  categoryScores = {};
+  CATEGORIES.forEach(cat => {
+    let catScore = 0;
+    cat.questions.forEach((q, qi) => {
+      const key = `${cat.id}_${qi}`;
+      catScore += (answers[key] || 0);
+    });
+    categoryScores[cat.id] = catScore;
+    totalScore += catScore;
+  });
+}
+
+function getScoreColor(pct) {
+  if (pct <= 0.40) return '#C0392B';
+  if (pct <= 0.70) return '#E67E22';
+  return '#27AE60';
+}
+
+function renderResults() {
+  const pct = totalScore / 72;
+  const color = getScoreColor(pct);
+  const circumference = 2 * Math.PI * 76; // ~477.52
+
+  // Ring
+  const ring = document.getElementById('ring-fill');
+  ring.style.stroke = color;
+  ring.setAttribute('stroke-dasharray', `${pct * circumference} ${circumference}`);
+  document.getElementById('ring-score-text').textContent = totalScore;
+
+  // Label
+  const labelEl = document.getElementById('score-label');
+  const headlineEl = document.getElementById('score-headline');
+  const descEl = document.getElementById('score-desc');
+  labelEl.className = 'score-label';
+  if (pct <= 0.40) {
+    labelEl.classList.add('red');
+    labelEl.textContent = 'High Opportunity';
+    headlineEl.textContent = 'Your online presence needs significant work';
+    descEl.textContent = 'You are likely missing out on local customers who cannot find you online. The good news is that several quick wins are available to start improving your visibility right away.';
+  } else if (pct <= 0.70) {
+    labelEl.classList.add('yellow');
+    labelEl.textContent = 'Improving';
+    headlineEl.textContent = 'You have a foundation, but gaps remain';
+    descEl.textContent = 'You have made progress building your online presence, but targeted improvements in a few areas could significantly increase your visibility and customer flow.';
+  } else {
+    labelEl.classList.add('green');
+    labelEl.textContent = 'Strong Foundation';
+    headlineEl.textContent = 'Your online presence is well established';
+    descEl.textContent = 'You are ahead of most local businesses online. Focus on maintaining consistency and fine-tuning the few remaining gaps to stay competitive.';
+  }
+
+  // Business label
+  if (businessName) {
+    document.getElementById('results-business-label').textContent = `Results for ${businessName}`;
+  }
+
+  // Category breakdown
+  const breakdown = document.getElementById('categories-breakdown');
+  breakdown.innerHTML = '';
+  CATEGORIES.forEach(cat => {
+    const score = categoryScores[cat.id];
+    const catPct = score / 12;
+    const catColor = getScoreColor(catPct);
+    const row = document.createElement('div');
+    row.className = 'cat-row';
+    row.innerHTML = `
+      <div class="cat-row-name">${cat.name}</div>
+      <div class="cat-bar-wrap"><div class="cat-bar-fill" style="width:0%;background:${catColor}" data-width="${Math.round(catPct*100)}%"></div></div>
+      <div class="cat-score-label" style="color:${catColor}">${score}/12</div>
+    `;
+    breakdown.appendChild(row);
+  });
+  // Animate bars
+  setTimeout(() => {
+    document.querySelectorAll('.cat-bar-fill').forEach(bar => {
+      bar.style.width = bar.dataset.width;
+    });
+  }, 100);
+
+  // Top 3 opportunities
+  const sorted = [...CATEGORIES].sort((a,b) => (categoryScores[a.id]/12) - (categoryScores[b.id]/12));
+  const top3 = sorted.slice(0,3);
+  const oppList = document.getElementById('opportunities-list');
+  oppList.innerHTML = '';
+  top3.forEach((cat, i) => {
+    const tip = OPPORTUNITY_TIPS[cat.id];
+    const isHigh = tip.impact === 'High Impact';
+    oppList.innerHTML += `
+      <div class="opp-item">
+        <div class="opp-header">
+          <div class="opp-title">${i+1}. ${tip.title}</div>
+          <span class="opp-badge ${isHigh?'':'medium'}">${tip.impact}</span>
+        </div>
+        <div class="opp-desc">${tip.desc}</div>
+        <div class="opp-stat">"${tip.stat}"</div>
+      </div>
+    `;
+  });
+}
+
+function showView(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ===== PDF GENERATION =====
+function generatePDF() {
+  try {
+    function pdfSafe(str) {
+      if (str == null) return '';
+      return String(str)
+        .replace(/\u2013/g, '-')
+        .replace(/\u2014/g, '-')
+        .replace(/\u00B7/g, '|')
+        .replace(/\u2019/g, "'")
+        .replace(/\u2018/g, "'")
+        .replace(/\u201C/g, '"')
+        .replace(/\u201D/g, '"')
+        .replace(/[^\x00-\x7F]/g, '');
+    }
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+    const W = 210, H = 297;
+    const margin = 20;
+    const contentW = W - margin * 2;
+
+    const CREAM = [250, 250, 247];
+    const GOLD = [184, 134, 11];
+    const DARK = [26, 26, 26];
+    const WHITE = [255, 255, 255];
+    const MID = [85, 85, 85];
+    const LIGHT = [136, 136, 136];
+    const BORDER = [224, 221, 213];
+    const RED_C = [192, 57, 43];
+    const YELLOW_C = [230, 126, 34];
+    const GREEN_C = [39, 174, 96];
+
+    const pct = totalScore / 72;
+    const scoreColor = pct <= 0.40 ? RED_C : (pct <= 0.70 ? YELLOW_C : GREEN_C);
+    const scoreLabel = pct <= 0.40 ? 'HIGH OPPORTUNITY' : (pct <= 0.70 ? 'IMPROVING' : 'STRONG FOUNDATION');
+
+    const biz = pdfSafe(businessName || 'Your Business');
+    const dateStr = new Date().toLocaleDateString('en-US', {month:'long',day:'numeric',year:'numeric'});
+
+    function addFooter(pageNum) {
+      doc.setFillColor(...DARK);
+      doc.rect(0, H - 14, W, 14, 'F');
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor(...WHITE);
+      doc.text(pdfSafe('tom@tms-solutions-group.com | tms-solutions-group.com | 386-387-8620'), W/2, H - 5.5, {align:'center'});
+    }
+
+    // ===== PAGE 1: COVER =====
+    doc.setFillColor(...CREAM);
+    doc.rect(0, 0, W, H, 'F');
+
+    // Header band
+    doc.setFillColor(...DARK);
+    doc.rect(0, 0, W, 36, 'F');
+    doc.setFont('times', 'bold');
+    doc.setFontSize(16);
+    doc.setTextColor(...WHITE);
+    doc.text(pdfSafe('TMS Solutions Group'), margin, 22);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor(...[180,180,180]);
+    doc.text(pdfSafe('tms-solutions-group.com'), W - margin, 22, {align:'right'});
+
+    // Gold accent bar
+    doc.setFillColor(...GOLD);
+    doc.rect(0, 36, W, 4, 'F');
+
+    // Tool title area
+    doc.setFont('times', 'bold');
+    doc.setFontSize(26);
+    doc.setTextColor(...DARK);
+    doc.text(pdfSafe('Website & Online Presence'), W/2, 68, {align:'center'});
+    doc.text(pdfSafe('Grader'), W/2, 80, {align:'center'});
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(11);
+    doc.setTextColor(...MID);
+    doc.text(pdfSafe('A comprehensive assessment of your local online presence'), W/2, 90, {align:'center'});
+
+    // Divider
+    doc.setDrawColor(...GOLD);
+    doc.setLineWidth(0.5);
+    doc.line(margin + 20, 96, W - margin - 20, 96);
+
+    // Business info
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(13);
+    doc.setTextColor(...DARK);
+    doc.text(pdfSafe(biz), W/2, 106, {align:'center'});
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor(...LIGHT);
+    doc.text(pdfSafe('Assessment Date: ' + dateStr), W/2, 113, {align:'center'});
+
+    // Score card
+    const cardX = margin + 20, cardY = 122, cardW = contentW - 40, cardH = 80;
+    doc.setFillColor(...WHITE);
+    doc.roundedRect(cardX, cardY, cardW, cardH, 4, 4, 'F');
+    doc.setDrawColor(...BORDER);
+    doc.setLineWidth(0.4);
+    doc.roundedRect(cardX, cardY, cardW, cardH, 4, 4, 'S');
+
+    // Score circle
+    const cx = cardX + 45, cy = cardY + cardH/2;
+    doc.setFillColor(...scoreColor);
+    doc.circle(cx, cy, 28, 'F');
+    doc.setFont('times', 'bold');
+    doc.setFontSize(24);
+    doc.setTextColor(...WHITE);
+    doc.text(String(totalScore), cx, cy - 2, {align:'center'});
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.text(pdfSafe('out of 72'), cx, cy + 7, {align:'center'});
+
+    // Score info right side
+    const infoX = cardX + 80;
+    doc.setFillColor(...scoreColor);
+    const pillW = 48;
+    doc.roundedRect(infoX, cardY + 12, pillW, 10, 2, 2, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(7.5);
+    doc.setTextColor(...WHITE);
+    doc.text(pdfSafe(scoreLabel), infoX + pillW/2, cardY + 18.5, {align:'center'});
+
+    const headline = pct <= 0.40 ? 'Your online presence needs significant work' : (pct <= 0.70 ? 'You have a foundation, but gaps remain' : 'Your online presence is well established');
+    doc.setFont('times', 'bold');
+    doc.setFontSize(12);
+    doc.setTextColor(...DARK);
+    const hlLines = doc.splitTextToSize(pdfSafe(headline), cardW - 90);
+    doc.text(hlLines, infoX, cardY + 34);
+
+    const pctText = Math.round(pct * 100) + '% - ' + (pct <= 0.40 ? 'Immediate attention recommended' : (pct <= 0.70 ? 'Targeted improvements will drive growth' : 'Maintain and optimize your strong foundation'));
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor(...MID);
+    const pctLines = doc.splitTextToSize(pdfSafe(pctText), cardW - 90);
+    doc.text(pctLines, infoX, cardY + 48);
+
+    // Category mini-scores row
+    let miniX = margin;
+    const miniY = 218;
+    const miniW = (contentW - 10) / 6;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8);
+    doc.setTextColor(...MID);
+    doc.text(pdfSafe('SCORES BY CATEGORY'), margin, miniY - 4);
+
+    CATEGORIES.forEach((cat, i) => {
+      const score = categoryScores[cat.id];
+      const cp = score / 12;
+      const cc = cp <= 0.40 ? RED_C : (cp <= 0.70 ? YELLOW_C : GREEN_C);
+      doc.setFillColor(...WHITE);
+      doc.roundedRect(miniX, miniY, miniW - 2, 38, 2, 2, 'F');
+      doc.setDrawColor(...BORDER);
+      doc.setLineWidth(0.3);
+      doc.roundedRect(miniX, miniY, miniW - 2, 38, 2, 2, 'S');
+      doc.setFillColor(...cc);
+      doc.roundedRect(miniX + 1, miniY + 1, miniW - 4, 12, 2, 2, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8);
+      doc.setTextColor(...WHITE);
+      doc.text(pdfSafe(score + '/12'), miniX + (miniW-2)/2, miniY + 8.5, {align:'center'});
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(6);
+      doc.setTextColor(...DARK);
+      const catNameLines = doc.splitTextToSize(pdfSafe(cat.name), miniW - 6);
+      doc.text(catNameLines, miniX + (miniW-2)/2, miniY + 20, {align:'center'});
+      miniX += miniW;
+    });
+
+    // Benchmark callout
+    doc.setFillColor(...[240,235,220]);
+    doc.roundedRect(margin, 264, contentW, 18, 2, 2, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8);
+    doc.setTextColor(...GOLD);
+    doc.text(pdfSafe('KEY BENCHMARK:'), margin + 5, 271);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(...DARK);
+    doc.text(pdfSafe('97% of consumers research local businesses online before visiting. Is your business ready for them?'), margin + 38, 271);
+    doc.setFont('helvetica', 'italic');
+    doc.setFontSize(7);
+    doc.setTextColor(...LIGHT);
+    doc.text(pdfSafe('Source: BrightLocal Local Consumer Review Survey'), margin + 5, 278);
+
+    addFooter(1);
+
+    // ===== PAGE 2: RESULTS OVERVIEW =====
+    doc.addPage();
+    doc.setFillColor(...CREAM);
+    doc.rect(0, 0, W, H, 'F');
+
+    doc.setFillColor(...DARK);
+    doc.rect(0, 0, W, 18, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(9);
+    doc.setTextColor(...WHITE);
+    doc.text(pdfSafe('WEBSITE & ONLINE PRESENCE GRADER - SCORE BREAKDOWN'), margin, 11);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(...[180,180,180]);
+    doc.text(pdfSafe(biz + ' | ' + dateStr), W - margin, 11, {align:'right'});
+
+    doc.setFont('times', 'bold');
+    doc.setFontSize(20);
+    doc.setTextColor(...DARK);
+    doc.text(pdfSafe('Your Score Breakdown'), margin, 34);
+
+    doc.setFillColor(...scoreColor);
+    doc.roundedRect(margin, 40, contentW, 16, 2, 2, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(11);
+    doc.setTextColor(...WHITE);
+    doc.text(pdfSafe('Overall Score: ' + totalScore + ' / 72  (' + Math.round(pct*100) + '%)  -  ' + scoreLabel), margin + 6, 50);
+
+    // Category bars
+    let y = 66;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(9);
+    doc.setTextColor(...MID);
+    doc.text(pdfSafe('CATEGORY'), margin, y - 3);
+    doc.text(pdfSafe('SCORE'), W - margin - 30, y - 3);
+    doc.text(pdfSafe('STATUS'), W - margin - 5, y - 3, {align:'right'});
+
+    CATEGORIES.forEach(cat => {
+      const score = categoryScores[cat.id];
+      const cp = score / 12;
+      const cc = cp <= 0.40 ? RED_C : (cp <= 0.70 ? YELLOW_C : GREEN_C);
+      const status = cp <= 0.40 ? 'NEEDS WORK' : (cp <= 0.70 ? 'IMPROVING' : 'STRONG');
+
+      doc.setFillColor(...WHITE);
+      doc.roundedRect(margin, y, contentW, 22, 2, 2, 'F');
+      doc.setDrawColor(...BORDER);
+      doc.setLineWidth(0.3);
+      doc.roundedRect(margin, y, contentW, 22, 2, 2, 'S');
+
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9.5);
+      doc.setTextColor(...DARK);
+      doc.text(pdfSafe(cat.name), margin + 4, y + 8);
+
+      // Bar
+      const barX = margin + 4, barY = y + 13, barW = contentW - 80, barH = 5;
+      doc.setFillColor(...BORDER);
+      doc.roundedRect(barX, barY, barW, barH, 1, 1, 'F');
+      doc.setFillColor(...cc);
+      doc.roundedRect(barX, barY, barW * cp, barH, 1, 1, 'F');
+
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9);
+      doc.setTextColor(...DARK);
+      doc.text(pdfSafe(score + '/12  (' + Math.round(cp*100) + '%)'), W - margin - 32, y + 8);
+
+      doc.setFillColor(...cc);
+      const pillX = W - margin - 28;
+      doc.roundedRect(pillX, y + 12, 28, 8, 1.5, 1.5, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(6.5);
+      doc.setTextColor(...WHITE);
+      doc.text(pdfSafe(status), pillX + 14, y + 17, {align:'center'});
+
+      y += 27;
+    });
+
+    // Summary bullets
+    y += 4;
+    doc.setFillColor(...[240,235,220]);
+    doc.roundedRect(margin, y, contentW, 40, 2, 2, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(9);
+    doc.setTextColor(...GOLD);
+    doc.text(pdfSafe('INDUSTRY BENCHMARKS'), margin + 5, y + 8);
+    const benchmarks = [
+      '97% of consumers research local businesses online before visiting (BrightLocal, 2024)',
+      'The average local business has only 39 Google reviews - are you above average?',
+      'Appearing in the Google 3-pack generates 126% more traffic than positions below',
+      'Businesses with 25+ reviews earn 108% more revenue than those with fewer (Womply)',
+      'Positive reviews are linked to up to 18% revenue growth (Harvard Business School)',
+    ];
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(...DARK);
+    benchmarks.forEach((b, i) => {
+      doc.text(pdfSafe('- ' + b), margin + 5, y + 17 + i * 5.5);
+    });
+
+    addFooter(2);
+
+    // ===== PAGE 3: OPPORTUNITIES =====
+    doc.addPage();
+    doc.setFillColor(...CREAM);
+    doc.rect(0, 0, W, H, 'F');
+
+    doc.setFillColor(...DARK);
+    doc.rect(0, 0, W, 18, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(9);
+    doc.setTextColor(...WHITE);
+    doc.text(pdfSafe('WEBSITE & ONLINE PRESENCE GRADER - TOP OPPORTUNITIES'), margin, 11);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(...[180,180,180]);
+    doc.text(pdfSafe(biz + ' | ' + dateStr), W - margin, 11, {align:'right'});
+
+    doc.setFont('times', 'bold');
+    doc.setFontSize(20);
+    doc.setTextColor(...DARK);
+    doc.text(pdfSafe('Your Top 3 Opportunities'), margin, 34);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.setTextColor(...MID);
+    doc.text(pdfSafe('Focus on these areas first for the highest return on your time and investment.'), margin, 42);
+
+    const sorted = [...CATEGORIES].sort((a,b) => (categoryScores[a.id]/12) - (categoryScores[b.id]/12));
+    const top3 = sorted.slice(0,3);
+    let oy = 52;
+
+    top3.forEach((cat, i) => {
+      const tip = OPPORTUNITY_TIPS[cat.id];
+      const score = categoryScores[cat.id];
+      const cp = score / 12;
+      const cc = cp <= 0.40 ? RED_C : (cp <= 0.70 ? YELLOW_C : GREEN_C);
+      const badgeText = tip.impact === 'High Impact' ? 'HIGH IMPACT' : 'MEDIUM IMPACT';
+
+      doc.setFillColor(...WHITE);
+      doc.roundedRect(margin, oy, contentW, 58, 3, 3, 'F');
+      doc.setDrawColor(...BORDER);
+      doc.setLineWidth(0.4);
+      doc.roundedRect(margin, oy, contentW, 58, 3, 3, 'S');
+
+      // Left accent bar
+      doc.setFillColor(...cc);
+      doc.rect(margin, oy, 4, 58, 'F');
+
+      // Number circle
+      doc.setFillColor(...cc);
+      doc.circle(margin + 16, oy + 11, 7, 'F');
+      doc.setFont('times', 'bold');
+      doc.setFontSize(11);
+      doc.setTextColor(...WHITE);
+      doc.text(String(i+1), margin + 16, oy + 13, {align:'center'});
+
+      // Title
+      doc.setFont('times', 'bold');
+      doc.setFontSize(12);
+      doc.setTextColor(...DARK);
+      doc.text(pdfSafe(tip.title), margin + 28, oy + 13);
+
+      // Badge
+      doc.setFillColor(...cc);
+      doc.roundedRect(W - margin - 36, oy + 6, 36, 9, 2, 2, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(6.5);
+      doc.setTextColor(...WHITE);
+      doc.text(pdfSafe(badgeText), W - margin - 18, oy + 11.5, {align:'center'});
+
+      // Current score
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor(...LIGHT);
+      doc.text(pdfSafe('Current score: ' + score + '/12 (' + Math.round(cp*100) + '%)'), margin + 28, oy + 22);
+
+      // Description
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9);
+      doc.setTextColor(...MID);
+      const descLines = doc.splitTextToSize(pdfSafe(tip.desc), contentW - 20);
+      doc.text(descLines, margin + 8, oy + 31);
+
+      // Stat
+      doc.setFont('helvetica', 'italic');
+      doc.setFontSize(8);
+      doc.setTextColor(...GOLD);
+      const statLines = doc.splitTextToSize(pdfSafe('"' + tip.stat + '"'), contentW - 20);
+      doc.text(statLines, margin + 8, oy + 49);
+
+      oy += 64;
+    });
+
+    // CTA Box
+    doc.setFillColor(...DARK);
+    doc.roundedRect(margin, oy + 4, contentW, 54, 3, 3, 'F');
+    doc.setFont('times', 'bold');
+    doc.setFontSize(16);
+    doc.setTextColor(...WHITE);
+    doc.text(pdfSafe('Ready to Improve Your Online Presence?'), W/2, oy + 18, {align:'center'});
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor(...[180,180,180]);
+    const ctaText = 'TMS Solutions Group helps local businesses dominate their market online. We build custom strategies that generate real results - more reviews, more visibility, and more customers.';
+    const ctaLines = doc.splitTextToSize(pdfSafe(ctaText), contentW - 20);
+    doc.text(ctaLines, W/2, oy + 28, {align:'center'});
+    doc.setFillColor(...GOLD);
+    doc.roundedRect(W/2 - 50, oy + 38, 100, 12, 2, 2, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(9);
+    doc.setTextColor(...WHITE);
+    doc.text(pdfSafe('Schedule a Free Strategy Call'), W/2, oy + 45.5, {align:'center'});
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(...GOLD);
+    doc.text(pdfSafe('tom@tms-solutions-group.com  |  tms-solutions-group.com  |  386-387-8620'), W/2, oy + 54, {align:'center'});
+
+    addFooter(3);
+
+    // Save
+    const safeBiz = (businessName || 'Assessment').replace(/[^a-zA-Z0-9\s]/g,'').replace(/\s+/g,'-');
+    doc.save('TMS-Online-Presence-Grader-' + safeBiz + '.pdf');
+
+  } catch (err) {
+    console.error('PDF generation error:', err);
+    alert('PDF generation failed: ' + err.message);
+  }
+}
+</script>
+</body>
+</html>
